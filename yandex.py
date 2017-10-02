@@ -28,13 +28,20 @@ except ImportError as er:
 
 
 
+class Yandex:
+    def version(self):
+        return '0.0.2'
 
 
-class YandexLyceum:
+
+
+
+class YandexLyceum(Yandex):
 
     def __init__(self):
 
-        self.ver = '0.0.2'
+        self.ver = Yandex.version(self)
+
         self.s = requests.session()
         self.login = False
 
@@ -323,15 +330,56 @@ class YandexLyceum:
 
 
 
-class YandexContest:
+class YandexContest(Yandex):
+
     def __init__(self):
-        self.ver = '0.0.1'
+
+        self.ver = Yandex.version(self)
+
         self.s = requests.session()
         self.login = False
         self.threading = 0
         self.operating = {}
 
+        self.load_cookies()
+
+        if not self.get_status():
+            print('Username: ', end='')
+            username = input()
+
+            print('Password: ', end='')
+            password = input()
+
+            if self.auth(username, password):
+                self.save_cookies()
+
+            else:
+                return
+
+        self.update()
+
         print('YandexContest %s' % self.ver)
+
+
+
+    def update(self):
+        url_github = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/yandex.py'
+        url_version = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/version.txt'
+
+        version = requests.get(url_version).text.strip()
+
+        print(version, self.ver)
+
+        if version != self.ver:
+            print()
+            print(' --- Update ---')
+            print('New version: %s' % version)
+            print()
+
+            return True
+
+        else:
+            return
 
 
 
@@ -464,4 +512,3 @@ class YandexContest:
                     break
                 except:
                     pass
-
