@@ -32,7 +32,7 @@ except ImportError as er:
 
 class Yandex:
     def version(self):
-        return '0.0.2'
+        return '0.0.3'
 
 
 
