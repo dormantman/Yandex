@@ -3,6 +3,7 @@
 
 
 try:
+    import re
     import os
     import sys
     import time
@@ -32,7 +33,7 @@ except ImportError as er:
 
 class Yandex:
     def version(self):
-        return '0.0.4'
+        return '0.1.0'
 
 
 
@@ -63,6 +64,14 @@ class YandexLyceum(Yandex):
         if not self.get_status():
             print('Username: ', end='')
             username = input()
+
+            pattern = r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
+
+            match = re.search(pattern, username)
+
+            if not match:
+                print(' --- Invalid email ---')
+                return
 
             print('Password: ', end='')
             password = input()
@@ -139,7 +148,9 @@ class YandexLyceum(Yandex):
         form['username'] = username
         form['password'] = password
 
-        response = self.s.post(url, data=form)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
+
+        response = self.s.post(url, data=form, headers=headers)
 
         if response.url == 'https://lms.yandexlyceum.ru/accounts/profile/':
             self.login = True
@@ -193,6 +204,10 @@ class YandexLyceum(Yandex):
 
 
     def profile(self):
+        if not self.login:
+            print('You are not authorized.')
+            return
+
         print('Loading profile info ...')
         url = 'https://lms.yandexlyceum.ru/accounts/profile'
 
@@ -318,6 +333,10 @@ class YandexLyceum(Yandex):
 
 
     def parse_lessons(self, f, t):
+        if not self.login:
+            print('You are not authorized.')
+            return
+
         try:
             f, t = abs(int(f)), abs(int(t))
         except:
@@ -347,6 +366,10 @@ class YandexLyceum(Yandex):
 
 
     def parse_tasks(self, f, t):
+        if not self.login:
+            print('You are not authorized.')
+            return
+
         try:
             f, t = abs(int(f)), abs(int(t))
         except:
@@ -472,7 +495,12 @@ class YandexContest(Yandex):
         url = 'https://passport.yandex.ru/auth'
 
         login, password = username, password
-        self.s.post(url, data={'login': login, 'passwd': password, 'retpath': 'https://passport.yandex.ru/profile'})
+
+        form = {'login': login, 'passwd': password, 'retpath': 'https://passport.yandex.ru/profile'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
+
+        self.s.post(url, data=form, headers=headers)
+
         if bs4.BeautifulSoup(
                 self.s.get('https://passport.yandex.ru/profile/').content,
                 "lxml"
@@ -518,7 +546,8 @@ class YandexContest(Yandex):
 
 
 
-    def _parse_print(self, f, t):
+    def _parse_print(self, f, t, word):
+        word = word.lower()
         for i in range(f, t):
             while i not in self.operating:
                 pass
@@ -526,7 +555,11 @@ class YandexContest(Yandex):
             if self.operating[i] == None:
                 continue
 
-            print(self.operating[i], i, sep='\t')
+            if word == None or word == '':
+                print(self.operating[i], i, sep='\t')
+            else:
+                if word in self.operating[i].lower():
+                    print(self.operating[i], i, sep='\t')
 
 
     def _parse_(self, url, i):
@@ -558,14 +591,18 @@ class YandexContest(Yandex):
         self.threading -= 1
 
 
-    def parse(self, f, t):
+    def parse(self, f, t, word = None):
+        if not self.login:
+            print('You are not authorized.')
+            return
+
         try:
             f, t = abs(int(f)), abs(int(t))+1
         except:
             print('-Bad Input-')
             return
 
-        threading.Thread(target=self._parse_print, args=[f, t]).start()
+        threading.Thread(target=self._parse_print, args=[f, t, word]).start()
 
         for i in range(f, t):
             while self.threading > 400:
