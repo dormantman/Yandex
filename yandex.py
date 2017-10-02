@@ -376,15 +376,15 @@ class YandexContest(Yandex):
             print('New version: %s' % version)
             print()
 
-            code = requests.get(url_update).text.strip()
+            code = requests.get(url_update).text.strip().replace('\r','')
 
             start = str(Path(sys.argv[0]))
             reupdate = str(Path(__file__))
 
-            with open(reupdate, 'w') as file:
+            with open(reupdate, 'w', encoding='utf-8') as file:
                 file.write(code)
 
-            os.system(start)
+            os.system('python %s' % start)
             exit(0)
 
             return True
