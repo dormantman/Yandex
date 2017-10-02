@@ -4,11 +4,13 @@
 
 try:
     import os
+    import sys
     import time
     import pickle
     import requests
     import lxml.html
     import threading
+    from pathlib import Path
     import bs4
 
 except ImportError as er:
@@ -363,18 +365,27 @@ class YandexContest(Yandex):
 
 
     def update(self):
-        url_github = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/yandex.py'
+        url_update = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/yandex.py'
         url_version = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/version.txt'
 
         version = requests.get(url_version).text.strip()
-
-        print(version, self.ver)
 
         if version != self.ver:
             print()
             print(' --- Update ---')
             print('New version: %s' % version)
             print()
+
+            code = requests.get(url_update).text.strip()
+
+            start = str(Path(sys.argv[0]))
+            reupdate = str(Path(__file__))
+
+            with open(reupdate, 'w') as file:
+                file.write(code)
+
+            os.system(start)
+            exit(0)
 
             return True
 
