@@ -8,6 +8,7 @@ try:
     import sys
     import time
     import pickle
+    import getpass
     import requests
     import lxml.html
     import threading
@@ -33,7 +34,7 @@ except ImportError as er:
 
 class Yandex:
     def version(self):
-        return '0.1.0'
+        return '0.1.1'
 
 
 
@@ -74,7 +75,7 @@ class YandexLyceum(Yandex):
                 return
 
             print('Password: ', end='')
-            password = input()
+            password = getpass.getpass()
 
             if self.auth(username, password):
                 self.save_cookies()
@@ -426,7 +427,7 @@ class YandexContest(Yandex):
             username = input()
 
             print('Password: ', end='')
-            password = input()
+            password = getpass.getpass()
 
             if self.auth(username, password):
                 self.save_cookies()
