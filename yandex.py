@@ -32,7 +32,7 @@ except ImportError as er:
 
 class Yandex:
     def version(self):
-        return '0.0.3'
+        return '0.0.4'
 
 
 
@@ -58,7 +58,60 @@ class YandexLyceum(Yandex):
         self.LessonPrint = False
         self.TasksPrint = False
 
+        self.load_cookies()
+
+        if not self.get_status():
+            print('Username: ', end='')
+            username = input()
+
+            print('Password: ', end='')
+            password = input()
+
+            if self.auth(username, password):
+                self.save_cookies()
+
+            else:
+                return
+
+        self.update()
+
         print('YandexLyceum %s' % self.ver)
+
+
+
+
+
+    def update(self):
+        url_update = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/yandex.py'
+        url_version = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/version.txt'
+
+        try:
+
+            version = requests.get(url_version).text.strip()
+
+            if version != self.ver:
+                print()
+                print(' --- Update ---')
+                print('New version: %s' % version)
+                print()
+
+                code = requests.get(url_update).text.strip().replace('\r', '')
+
+                start = str(Path(sys.argv[0]))
+                reupdate = str(Path(__file__))
+
+                with open(reupdate, 'w', encoding='utf-8') as file:
+                    file.write(code)
+
+                os.system('python %s' % start)
+                exit(0)
+                return True
+
+            else:
+                return
+
+        except:
+            print(' --- Error Update ---')
 
 
 
@@ -368,29 +421,33 @@ class YandexContest(Yandex):
         url_update = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/yandex.py'
         url_version = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/version.txt'
 
-        version = requests.get(url_version).text.strip()
+        try:
 
-        if version != self.ver:
-            print()
-            print(' --- Update ---')
-            print('New version: %s' % version)
-            print()
+            version = requests.get(url_version).text.strip()
 
-            code = requests.get(url_update).text.strip().replace('\r','')
+            if version != self.ver:
+                print()
+                print(' --- Update ---')
+                print('New version: %s' % version)
+                print()
 
-            start = str(Path(sys.argv[0]))
-            reupdate = str(Path(__file__))
+                code = requests.get(url_update).text.strip().replace('\r','')
 
-            with open(reupdate, 'w', encoding='utf-8') as file:
-                file.write(code)
+                start = str(Path(sys.argv[0]))
+                reupdate = str(Path(__file__))
 
-            os.system('python %s' % start)
-            exit(0)
+                with open(reupdate, 'w', encoding='utf-8') as file:
+                    file.write(code)
 
-            return True
+                os.system('python %s' % start)
+                exit(0)
+                return True
 
-        else:
-            return
+            else:
+                return
+
+        except:
+            print(' --- Error Update ---')
 
 
 
