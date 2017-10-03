@@ -24,6 +24,7 @@ yc = YandexContest()
 yc.load_cookies()
 
 
+print(' -- Parse Contests --')
 start = time.clock()
 yc.parse(
     input('From: '),
