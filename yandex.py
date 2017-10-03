@@ -10,7 +10,7 @@
 #
 #
 #
-#    This version: 0.1.1a
+#    This version: 0.1.2a
 #
 #
 #    UPDATE:    https://github.com/DormantMan/Yandex
