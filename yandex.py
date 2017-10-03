@@ -75,10 +75,7 @@ except ImportError:
 
 
 class Yandex:
-
-    @staticmethod
-    def version():
-        return '0.1.1a'
+    version = '0.1.2a'
 
 
 class YandexLyceum(Yandex):
@@ -87,7 +84,7 @@ class YandexLyceum(Yandex):
 
         print('YandexLyceum %s' % self.ver)
 
-        self.ver = Yandex.version()
+        self.ver = Yandex.version
 
         self.s = requests.session()
         self.login = False
@@ -424,7 +421,7 @@ class YandexContest(Yandex):
 
         print('YandexContest %s' % self.ver)
 
-        self.ver = Yandex.version()
+        self.ver = Yandex.version
 
         self.s = requests.session()
         self.login = False
