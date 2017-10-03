@@ -160,14 +160,6 @@ class YandexLyceum(Yandex):
         except IndexError:
             print(' --- Error Update ---')
 
-    @staticmethod
-    def clear():
-
-        if os.name == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
-
     def auth(self, username, password):
 
         if self.login:
@@ -490,21 +482,12 @@ class YandexContest(Yandex):
     def get_status(self):
         return self.login
 
-    @staticmethod
-    def clear():
-        if os.name == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
-
-    def auth(self, username, password):
+    def auth(self, login, password):
         if self.login:
             print('You are already authorized.')
             return True
 
         url = 'https://passport.yandex.ru/auth'
-
-        login, password = username, password
 
         form = {'login': login, 'passwd': password, 'retpath': 'https://passport.yandex.ru/profile'}
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
@@ -630,3 +613,4 @@ class YandexContest(Yandex):
                     break
                 except ConnectionError:
                     pass
+                
