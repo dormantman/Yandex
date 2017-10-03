@@ -160,14 +160,6 @@ class YandexLyceum(Yandex):
         except IndexError:
             print(' --- Error Update ---')
 
-    @staticmethod
-    def clear():
-
-        if os.name == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
-
     def auth(self, username, password):
 
         if self.login:
@@ -488,13 +480,6 @@ class YandexContest(Yandex):
 
     def get_status(self):
         return self.login
-
-    @staticmethod
-    def clear():
-        if os.name == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
 
     def auth(self, login, password):
         if self.login:
