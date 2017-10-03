@@ -10,7 +10,7 @@
 #
 #
 #
-#    This version: 0.1.2a
+#    This version: 0.1.2a887
 #
 #
 #    UPDATE:    https://github.com/DormantMan/Yandex
@@ -100,7 +100,7 @@ class YandexLyceum(Yandex):
         self.LessonPrint = False
         self.TasksPrint = False
 
-        self.load_cookies()
+        self.load_cookies('cookies.dm', False)
 
         if not self.get_status():
             username = input('Username: ')
@@ -207,8 +207,8 @@ class YandexLyceum(Yandex):
         except IOError:
             print('-Error save cookies-')
 
-    def load_cookies(self, filename='cookies.dm', main=None):
-        if main is not None:
+    def load_cookies(self, filename='cookies.dm', main=True):
+        if main:
             print('Loading cookies ...')
 
         try:
@@ -217,7 +217,7 @@ class YandexLyceum(Yandex):
             file_cookies.close()
 
         except IOError:
-            if main is not None:
+            if main:
                 print('-Error Loading cookies-')
 
         if bs4.BeautifulSoup(
@@ -230,7 +230,7 @@ class YandexLyceum(Yandex):
 
         self.login = False
 
-        if main is not None:
+        if main:
             print('Cookies not loaded.')
 
         return False
@@ -356,7 +356,12 @@ class YandexLyceum(Yandex):
 
         try:
             f, t = abs(int(f)), abs(int(t))
+
         except TypeError:
+            print('-Bad Input-')
+            return
+
+        except ValueError:
             print('-Bad Input-')
             return
 
@@ -390,7 +395,12 @@ class YandexLyceum(Yandex):
 
         try:
             f, t = abs(int(f)), abs(int(t))
+
         except TypeError:
+            print('-Bad Input-')
+            return
+
+        except ValueError:
             print('-Bad Input-')
             return
 
@@ -592,7 +602,12 @@ class YandexContest(Yandex):
 
         try:
             f, t = abs(int(f)), abs(int(t))+1
+
         except TypeError:
+            print('-Bad Input-')
+            return
+
+        except ValueError:
             print('-Bad Input-')
             return
 
