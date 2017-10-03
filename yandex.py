@@ -103,8 +103,7 @@ class YandexLyceum(Yandex):
         self.load_cookies()
 
         if not self.get_status():
-            print('Username: ', end='')
-            username = input()
+            username = input('Username: ')
 
             pattern = r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*" \
                       r"@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
@@ -115,8 +114,7 @@ class YandexLyceum(Yandex):
                 print(' --- Invalid email ---')
                 return
 
-            print('Password: ', end='')
-            password = getpass.getpass()
+            password = getpass.getpass('Password: ')
 
             if self.auth(username, password):
                 self.save_cookies()
@@ -201,7 +199,7 @@ class YandexLyceum(Yandex):
     def get_status(self):
         return self.login
 
-    def save_cookies(self, filename='CookiesYandexLyceum'):
+    def save_cookies(self, filename='cookies.dm'):
         print('Save cookies ...')
         try:
             with open(filename, 'wb') as cookies:
@@ -209,7 +207,7 @@ class YandexLyceum(Yandex):
         except IOError:
             print('-Error save cookies-')
 
-    def load_cookies(self, filename='CookiesYandexLyceum', main=None):
+    def load_cookies(self, filename='cookies.dm', main=None):
         if main is not None:
             print('Loading cookies ...')
 
@@ -436,11 +434,8 @@ class YandexContest(Yandex):
         self.load_cookies()
 
         if not self.get_status():
-            print('Username: ', end='')
-            username = input()
-
-            print('Password: ', end='')
-            password = getpass.getpass()
+            username = input('Username: ')
+            password = getpass.getpass('Password: ')
 
             if self.auth(username, password):
                 self.save_cookies()
@@ -518,7 +513,7 @@ class YandexContest(Yandex):
             print('-Wrong login or password!-')
             return False
 
-    def save_cookies(self, filename='CookiesYandexContest'):
+    def save_cookies(self, filename='cookies.dm'):
         print('Save cookies ...')
         try:
             with open(filename, 'wb') as cookies:
@@ -526,7 +521,7 @@ class YandexContest(Yandex):
         except IOError:
             print('-Error save cookies-')
 
-    def load_cookies(self, filename='CookiesYandexContest'):
+    def load_cookies(self, filename='cookies.dm'):
         print('Loading cookies ...')
         try:
             with open(filename, 'rb') as f:
