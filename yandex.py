@@ -160,13 +160,6 @@ class YandexLyceum(Yandex):
         except IndexError:
             print(' --- Error Update ---')
 
-    @staticmethod
-    def clear():
-
-        if os.name == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
 
     def auth(self, username, password):
 
