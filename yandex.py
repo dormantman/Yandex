@@ -160,7 +160,6 @@ class YandexLyceum(Yandex):
         except IndexError:
             print(' --- Error Update ---')
 
-
     def auth(self, username, password):
 
         if self.login:
@@ -434,7 +433,7 @@ class YandexContest(Yandex):
         self.threading = 0
         self.operating = {}
 
-        self.load_cookies()
+        self.load_cookies('cookies.dm', False)
 
         if not self.get_status():
             username = input('Username: ')
@@ -483,14 +482,12 @@ class YandexContest(Yandex):
     def get_status(self):
         return self.login
 
-    def auth(self, username, password):
+    def auth(self, login, password):
         if self.login:
             print('You are already authorized.')
             return True
 
         url = 'https://passport.yandex.ru/auth'
-
-        login, password = username, password
 
         form = {'login': login, 'passwd': password, 'retpath': 'https://passport.yandex.ru/profile'}
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
@@ -517,8 +514,10 @@ class YandexContest(Yandex):
         except IOError:
             print('-Error save cookies-')
 
-    def load_cookies(self, filename='cookies.dm'):
-        print('Loading cookies ...')
+    def load_cookies(self, filename='cookies.dm', main=True):
+        if main:
+            print('Loading cookies ...')
+
         try:
             with open(filename, 'rb') as f:
                 self.s.cookies = pickle.load(f)
@@ -530,11 +529,13 @@ class YandexContest(Yandex):
                 "lxml"
         ).find('div', {'class': 'personal-info-name'}):
             self.login = True
-            print('Cookies loaded.')
+            if main:
+                print('Cookies loaded.')
             return True
 
         self.login = False
-        print('Cookies not loaded.')
+        if main:
+            print('Cookies not loaded.')
         return False
 
     def _parse_print(self, f, t, word):
