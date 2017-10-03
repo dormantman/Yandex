@@ -441,7 +441,7 @@ class YandexContest(Yandex):
         self.threading = 0
         self.operating = {}
 
-        self.load_cookies()
+        self.load_cookies('cookies.dm', False)
 
         if not self.get_status():
             username = input('Username: ')
@@ -531,8 +531,10 @@ class YandexContest(Yandex):
         except IOError:
             print('-Error save cookies-')
 
-    def load_cookies(self, filename='cookies.dm'):
-        print('Loading cookies ...')
+    def load_cookies(self, filename='cookies.dm', main=True):
+        if main:
+            print('Loading cookies ...')
+
         try:
             with open(filename, 'rb') as f:
                 self.s.cookies = pickle.load(f)
@@ -544,11 +546,13 @@ class YandexContest(Yandex):
                 "lxml"
         ).find('div', {'class': 'personal-info-name'}):
             self.login = True
-            print('Cookies loaded.')
+            if main:
+                print('Cookies loaded.')
             return True
 
         self.login = False
-        print('Cookies not loaded.')
+        if main:
+            print('Cookies not loaded.')
         return False
 
     def _parse_print(self, f, t, word):
