@@ -4,33 +4,29 @@ from yandex import YandexLyceum, YandexContest
 
 yl = YandexLyceum()
 
-yl.load_cookies()
 yl.profile()
 
 print(' -- Parse Lessons --')
-yl.parse_lessons(
-    input('From: '), 
-    input('To: ')
-)
+if yl.get_status:
+    yl.parse_lessons(input('From: '), input('To: '))
+else:
+    print('You are already authorized.')
 
 print(' -- Parse Tasks --')
-yl.parse_tasks(
-    input('From: '), 
-    input('To: ')
-)
-
+if yl.get_status:
+    yl.parse_tasks(input('From: '), input('To: '))
+else:
+    print('You are already authorized.')
 
 yc = YandexContest()
-yc.load_cookies()
-
 
 print(' -- Parse Contests --')
 start = time.clock()
-yc.parse(
-    input('From: '),
-    input('To: '),
-    input('Word: ')
-)
+if yc.get_status:
+    yc.parse(input('From: '), input('To: '), input('Word: '))
+else:
+    print('You are already authorized.')
+    exit()
 
 while True:
     try:
