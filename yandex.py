@@ -308,7 +308,7 @@ class YandexLyceum(Yandex):
             body = html.xpath(r'//div//h5[@class="card-title main-title"]')
 
             if len(body) == 0:
-                raise WindowsError
+                raise IndexError
 
             self.operatingLessons[i] = body[0].text.strip()
 
@@ -333,7 +333,7 @@ class YandexLyceum(Yandex):
             body = html.xpath(r'//div//a[@id="modal_task_description_btn"]')
 
             if len(body) == 0:
-                raise WindowsError
+                raise IndexError
 
             name = body[0].text.strip()
 
