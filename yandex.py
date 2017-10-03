@@ -262,7 +262,7 @@ class YandexLyceum(Yandex):
             while i not in self.operatingLessons:
                 pass
 
-            if self.operatingLessons[i] == None:
+            if self.operatingLessons[i] is None:
                 continue
 
             print()
@@ -272,8 +272,6 @@ class YandexLyceum(Yandex):
 
         self.LessonPrint = False
 
-
-
     def _tasks_parse_print_(self, f, t):
         self.TasksPrint = True
 
@@ -281,7 +279,7 @@ class YandexLyceum(Yandex):
             while i not in self.operatingTasks:
                 pass
 
-            if self.operatingTasks[i] == None:
+            if self.operatingTasks[i] is None:
                 continue
 
             print()
@@ -293,10 +291,6 @@ class YandexLyceum(Yandex):
 
         self.TasksPrint = False
 
-
-
-
-
     def _lessons_parse_threading_(self, url, i):
         self.threadingLessons += 1
 
@@ -304,7 +298,7 @@ class YandexLyceum(Yandex):
             try:
                 r = self.s.get(url % i)
                 break
-            except:
+            except ConnectionError:
                 pass
 
         try:
@@ -316,13 +310,11 @@ class YandexLyceum(Yandex):
 
             self.operatingLessons[i] = body[0].text.strip()
 
-        except:
+        except IndexError:
             self.operatingLessons[i] = None
             pass
 
         self.threadingLessons -= 1
-
-
 
     def _tasks_parse_threading_(self, url, i):
         self.threadingTasks += 1
@@ -331,7 +323,7 @@ class YandexLyceum(Yandex):
             try:
                 r = self.s.get(url % i)
                 break
-            except:
+            except ConnectionError:
                 pass
 
         try:
@@ -341,25 +333,21 @@ class YandexLyceum(Yandex):
             if len(body) == 0:
                 raise WindowsError
 
-
             name = body[0].text.strip()
 
             body = html.xpath(r'//div//div[@class="col-md-7 accordion2-result"]')
             status = body[5].text.strip()
             value = body[6].text.strip()
 
-            self.operatingTasks[i] = {'name':name, 'status':status, 'value':value}
+            self.operatingTasks[i] = {'name': name, 'status': status, 'value': value}
 
             self.balls += int(body[6].text.strip())
 
-        except:
+        except IndexError:
             self.operatingTasks[i] = None
             pass
 
         self.threadingTasks -= 1
-
-
-
 
     def parse_lessons(self, f, t):
         if not self.login:
@@ -368,7 +356,7 @@ class YandexLyceum(Yandex):
 
         try:
             f, t = abs(int(f)), abs(int(t))
-        except:
+        except TypeError:
             print('-Bad Input-')
             return
 
@@ -383,16 +371,17 @@ class YandexLyceum(Yandex):
 
             while True:
                 try:
-                    threading.Thread(target=self._lessons_parse_threading_, args=[url, i]).start()
+                    threading.Thread(
+                        target=self._lessons_parse_threading_,
+                        args=[url, i]
+                    ).start()
                     break
-                except:
+
+                except ConnectionError:
                     pass
 
         while self.LessonPrint:
             pass
-
-
-
 
     def parse_tasks(self, f, t):
         if not self.login:
@@ -401,7 +390,7 @@ class YandexLyceum(Yandex):
 
         try:
             f, t = abs(int(f)), abs(int(t))
-        except:
+        except TypeError:
             print('-Bad Input-')
             return
 
@@ -420,21 +409,13 @@ class YandexLyceum(Yandex):
                 try:
                     threading.Thread(target=self._tasks_parse_threading_, args=[url, i]).start()
                     break
-                except:
+                except ConnectionError:
                     pass
 
         while self.TasksPrint:
             pass
 
         print('Your balls: %s' % self.balls)
-
-
-
-
-
-
-
-
 
 
 class YandexContest(Yandex):
@@ -467,10 +448,6 @@ class YandexContest(Yandex):
 
         self.update()
 
-
-
-
-
     def update(self):
         url_update = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/yandex.py'
         url_version = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/version.txt'
@@ -485,7 +462,7 @@ class YandexContest(Yandex):
                 print('New version: %s' % version)
                 print()
 
-                code = requests.get(url_update).text.strip().replace('\r','')
+                code = requests.get(url_update).text.strip().replace('\r', '')
 
                 start = str(Path(sys.argv[0]))
                 reupdate = str(Path(__file__))
@@ -500,23 +477,18 @@ class YandexContest(Yandex):
             else:
                 return
 
-        except:
+        except ConnectionError:
             print(' --- Error Update ---')
-
-
 
     def get_status(self):
         return self.login
 
-
-
-    def clear(self):
+    @staticmethod
+    def clear():
         if os.name == 'nt':
             os.system('cls')
         else:
             os.system('clear')
-
-
 
     def auth(self, username, password):
         if self.login:
@@ -544,23 +516,20 @@ class YandexContest(Yandex):
             print('-Wrong login or password!-')
             return False
 
-
-
     def save_cookies(self, filename='CookiesYandexContest'):
         print('Save cookies ...')
         try:
             with open(filename, 'wb') as cookies:
                 pickle.dump(self.s.cookies, cookies)
-        except:
+        except IOError:
             print('-Error save cookies-')
-
 
     def load_cookies(self, filename='CookiesYandexContest'):
         print('Loading cookies ...')
         try:
             with open(filename, 'rb') as f:
                 self.s.cookies = pickle.load(f)
-        except:
+        except IOError:
             print('-Error Loading cookies-')
 
         if bs4.BeautifulSoup(
@@ -575,23 +544,20 @@ class YandexContest(Yandex):
         print('Cookies not loaded.')
         return False
 
-
-
     def _parse_print(self, f, t, word):
         word = word.lower()
         for i in range(f, t):
             while i not in self.operating:
                 pass
 
-            if self.operating[i] == None:
+            if self.operating[i] is None:
                 continue
 
-            if word == None or word == '':
+            if word is None or word == '':
                 print(self.operating[i], i, sep='\t')
             else:
                 if word in self.operating[i].lower():
                     print(self.operating[i], i, sep='\t')
-
 
     def _parse_(self, url, i):
         self.threading += 1
@@ -600,7 +566,7 @@ class YandexContest(Yandex):
             try:
                 enter_request = self.s.get(url)
                 break
-            except:
+            except ConnectionError:
                 pass
 
         enter_html = bs4.BeautifulSoup(enter_request.content, "lxml")
@@ -610,9 +576,10 @@ class YandexContest(Yandex):
                 name = name.string
                 self.operating[i] = name
 
-            elif enter_html.find('div', {'class': 'msg msg_type_warn msg_theme_island'}).contents[
-                1] == 'У вас нет прав просматривать это соревнование':
-                #name = '---403 Forbidden---'
+            elif enter_html.find(
+                    'div',
+                    {'class': 'msg msg_type_warn msg_theme_island'}
+            ).contents[1] == 'У вас нет прав просматривать это соревнование':
                 self.operating[i] = None
 
         except AttributeError:
@@ -645,5 +612,5 @@ class YandexContest(Yandex):
                         i
                     ]).start()
                     break
-                except Exception:
+                except ConnectionError:
                     pass
