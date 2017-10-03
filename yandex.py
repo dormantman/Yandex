@@ -21,7 +21,7 @@ except ImportError as er:
     print()
 
     os.system('pip install requests lxml bs4 threading')
-    os.system('pip3 install requests lxmlbs4 threading')
+    os.system('pip3 install requests lxml bs4 threading')
 
     import requests
     import lxml.html
