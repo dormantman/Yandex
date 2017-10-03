@@ -10,7 +10,7 @@
 #
 #
 #
-#    This version: 0.1.1
+#    This version: 0.1.1a
 #
 #
 #    UPDATE:    https://github.com/DormantMan/Yandex
@@ -78,7 +78,7 @@ class Yandex:
 
     @staticmethod
     def version():
-        return '0.1.1'
+        return '0.1.1a'
 
 
 class YandexLyceum(Yandex):
