@@ -31,9 +31,10 @@ else:
 while True:
     try:
         print('\b' * 100, end='')
-        print('Time: %s' % (time.clock()-start), "\t Press Ctrl+D or Ctrl+C to exit.", end='')
+        print('Time: %s' % (round(time.clock()-start, 2)), "\t Press Ctrl+D or Ctrl+C to exit.", end='')
         sys.stdout.flush()
         time.sleep(1)
     except KeyboardInterrupt:
         print("Exiting...")
         break
+        
