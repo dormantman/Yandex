@@ -490,13 +490,6 @@ class YandexContest(Yandex):
     def get_status(self):
         return self.login
 
-    @staticmethod
-    def clear():
-        if os.name == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
-
     def auth(self, username, password):
         if self.login:
             print('You are already authorized.')
