@@ -441,7 +441,7 @@ class YandexContest(Yandex):
 
     def __init__(self):
 
-        self.ver = Yandex.version(self)
+        self.ver = Yandex.version()
 
         self.s = requests.session()
         self.login = False
@@ -619,7 +619,7 @@ class YandexContest(Yandex):
 
         self.threading -= 1
 
-    def parse(self, f, t, word = None):
+    def parse(self, f, t, word=None):
         if not self.login:
             print('You are not authorized.')
             return
