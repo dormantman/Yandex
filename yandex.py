@@ -82,7 +82,7 @@ class YandexLyceum(Yandex):
 
     def __init__(self):
 
-        print('YandexLyceum %s' % self.ver)
+        print('YandexLyceum %s' % Yandex.version)
 
         self.ver = Yandex.version
 
@@ -180,8 +180,8 @@ class YandexLyceum(Yandex):
         login = self.s.get(url)
         login_html = lxml.html.fromstring(login.text)
         hidden_inputs = login_html.xpath(r'//form//input[@type="hidden"]')
-        form = {x.attrib["name"]: x.attrib["value"] for x in hidden_inputs}
 
+        form = {x.attrib["name"]: x.attrib["value"] for x in hidden_inputs}
         form['username'] = username
         form['password'] = password
 
@@ -199,7 +199,6 @@ class YandexLyceum(Yandex):
             return False
 
     def get_status(self):
-
         return self.login
 
     def save_cookies(self, filename='CookiesYandexLyceum'):
@@ -210,15 +209,18 @@ class YandexLyceum(Yandex):
         except IOError:
             print('-Error save cookies-')
 
-    def load_cookies(self, filename='CookiesYandexLyceum'):
-        print('Loading cookies ...')
+    def load_cookies(self, filename='CookiesYandexLyceum', main=None):
+        if main is not None:
+            print('Loading cookies ...')
 
         try:
-            with open(filename, 'rb') as f:
-                self.s.cookies = pickle.load(f)
+            file_cookies = open(filename, 'rb')
+            self.s.cookies = pickle.load(file_cookies)
+            file_cookies.close()
 
         except IOError:
-            print('-Error Loading cookies-')
+            if main is not None:
+                print('-Error Loading cookies-')
 
         if bs4.BeautifulSoup(
                 self.s.get('https://lms.yandexlyceum.ru/accounts/profile/').content,
@@ -229,7 +231,10 @@ class YandexLyceum(Yandex):
             return True
 
         self.login = False
-        print('Cookies not loaded.')
+
+        if main is not None:
+            print('Cookies not loaded.')
+
         return False
 
     def profile(self):
@@ -419,7 +424,7 @@ class YandexContest(Yandex):
 
     def __init__(self):
 
-        print('YandexContest %s' % self.ver)
+        print('YandexContest %s' % Yandex.version)
 
         self.ver = Yandex.version
 
