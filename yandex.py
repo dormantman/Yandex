@@ -160,6 +160,14 @@ class YandexLyceum(Yandex):
         except IndexError:
             print(' --- Error Update ---')
 
+    @staticmethod
+    def clear():
+
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
+
     def auth(self, username, password):
 
         if self.login:
@@ -172,8 +180,7 @@ class YandexLyceum(Yandex):
         hidden_inputs = login_html.xpath(r'//form//input[@type="hidden"]')
 
         form = {x.attrib["name"]: x.attrib["value"] for x in hidden_inputs}
-        form['username'] = username
-        form['password'] = password
+        form['username'], form['password'] = username, password
 
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
 
@@ -482,6 +489,13 @@ class YandexContest(Yandex):
     def get_status(self):
         return self.login
 
+    @staticmethod
+    def clear():
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
+
     def auth(self, login, password):
         if self.login:
             print('You are already authorized.')
@@ -537,6 +551,46 @@ class YandexContest(Yandex):
         if main:
             print('Cookies not loaded.')
         return False
+
+    def profile(self):
+        if not self.login:
+            print('You are not authorized.')
+            return
+
+        print('Loading profile info ...')
+        url = 'https://passport.yandex.ru/profile/'
+
+        try:
+            r = self.s.get(url)
+            html = lxml.html.fromstring(r.text)
+
+            body = bs4.BeautifulSoup(
+                self.s.get('https://passport.yandex.ru/profile/').content,
+                "lxml").find('div', {'class': 'personal-info-name'})
+
+            name = body.text
+
+            body = html.xpath(r'//div//div[@data-reactid="55"]')
+            login = body[0].text.strip()
+
+            body = bs4.BeautifulSoup(
+                self.s.get('https://passport.yandex.ru/profile/').content,
+                "lxml").find('div', {'class': 'last-auth'})
+            date = body.text.replace('История входов', '')
+
+        except ConnectionError:
+            print('Error get info about profile.')
+            return
+
+        except IndexError:
+            print('Error get info about profile.')
+            return
+
+        except TypeError:
+            print('Error get info about profile.')
+            return
+
+        print("%s: %s, %s" % (name, login, date))
 
     def _parse_print(self, f, t, word):
         word = word.lower()
@@ -613,4 +667,3 @@ class YandexContest(Yandex):
                     break
                 except ConnectionError:
                     pass
-                
