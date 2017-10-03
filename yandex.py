@@ -20,8 +20,8 @@ except ImportError as er:
 
     print()
 
-    os.system('pip install requests lxml bs4 threading')
-    os.system('pip3 install requests lxml bs4 threading')
+    os.system('pip install requests lxml beautifulsoup4')
+    os.system('pip3 install requests lxml beautifulsoup4')
 
     import requests
     import lxml.html
