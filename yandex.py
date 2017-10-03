@@ -85,6 +85,8 @@ class YandexLyceum(Yandex):
 
     def __init__(self):
 
+        print('YandexLyceum %s' % self.ver)
+
         self.ver = Yandex.version()
 
         self.s = requests.session()
@@ -126,8 +128,6 @@ class YandexLyceum(Yandex):
                 return
 
         self.update()
-
-        print('YandexLyceum %s' % self.ver)
 
     def update(self):
         url_update = 'https://raw.githubusercontent.com/DormantMan/Yandex/master/yandex.py'
@@ -441,6 +441,8 @@ class YandexContest(Yandex):
 
     def __init__(self):
 
+        print('YandexContest %s' % self.ver)
+
         self.ver = Yandex.version()
 
         self.s = requests.session()
@@ -465,7 +467,7 @@ class YandexContest(Yandex):
 
         self.update()
 
-        print('YandexContest %s' % self.ver)
+
 
 
 
