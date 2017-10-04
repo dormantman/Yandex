@@ -1,3 +1,4 @@
+
 #! /usr/bin/env python
 # -*- coding: utf-8 -*
 
@@ -104,16 +105,6 @@ class YandexLyceum(Yandex):
 
         if not self.get_status():
             username = input('Username: ')
-
-            pattern = r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*" \
-                      r"@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
-
-            match = re.search(pattern, username)
-
-            if not match:
-                print(' --- Invalid email ---')
-                return
-
             password = getpass.getpass('Password: ')
 
             if self.auth(username, password):
