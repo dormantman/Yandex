@@ -10,7 +10,7 @@
 #
 #
 #
-#    This version: 0.1.2a
+#    This version: 0.1.3a
 #
 #
 #    UPDATE:    https://github.com/DormantMan/Yandex
@@ -46,6 +46,7 @@
 
 # IMPORTS
 
+import re
 import os
 import sys
 import pickle
@@ -74,11 +75,10 @@ except ImportError:
 
 
 class Yandex:
-    version = '0.1.2a'
+    version = '0.1.3a'
 
 
 class YandexLyceum(Yandex):
-
     def __init__(self):
 
         print('YandexLyceum %s' % Yandex.version)
@@ -103,6 +103,16 @@ class YandexLyceum(Yandex):
 
         if not self.get_status():
             username = input('Username: ')
+
+            pattern = r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*" \
+                      r"@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
+
+            match = re.search(pattern, username)
+
+            if not match:
+                print(' --- Invalid email ---')
+                return
+
             password = getpass.getpass('Password: ')
 
             if self.auth(username, password):
@@ -223,17 +233,48 @@ class YandexLyceum(Yandex):
         print('Loading profile info ...')
         url = 'https://lms.yandexlyceum.ru/accounts/profile'
 
-        r = self.s.get(url)
-        html = lxml.html.fromstring(r.text)
+        try:
+            r = self.s.get(url)
+            html = lxml.html.fromstring(r.text)
 
-        body = html.xpath(r'//title')
-        name = body[0].text.strip()
+            body = html.xpath(r'//title')
+            name = body[0].text.strip()
 
-        body = html.xpath(r'//div//span[@class="label label-status"]')
-        city = body[0].text.strip()
-        year = body[1].text.strip()
+            body = html.xpath(r'//div//span[@class="label label-status"]')
+            city = body[0].text.strip()
+            year = body[1].text.strip()
 
-        print("%s: %s, %s" % (name, city, year))
+            url = 'https://lms.yandexlyceum.ru/user/my_tasks/'
+
+            r = self.s.get(url)
+            html = lxml.html.fromstring(r.text)
+
+            body = [int(i.text.strip()) for i in html.xpath(r'//td') if i.text is not None and i.text.strip().isdigit()]
+            balls = sum(body)
+            not_ok = body.count(0)
+
+            print()
+            print(' - Profile Info - ')
+            print("%s: %s, %s" % (name, city, year))
+            print('Points: %s' % balls)
+            print('Not decided: %s ' % not_ok)
+
+            url = 'https://lms.yandexlyceum.ru/user/courses/attendance'
+
+            r = self.s.get(url)
+            html = lxml.html.fromstring(r.text)
+
+            alls = int(html.xpath(r'//td//label[@class="label label-inverse big-label"]')[0].text)
+            success = int(html.xpath(r'//td//label[@class="label label-success big-label"]')[0].text)
+
+            print()
+            print(' - My attendance - ')
+            print("Total: %s\nVisited: %s\nSkipped: %s" % (alls, success, alls - success))
+
+            print()
+
+        except Exception:
+            print('Error get profile info.')
 
     def _lessons_parse_print_(self, f, t):
         self.LessonPrint = True
@@ -350,7 +391,7 @@ class YandexLyceum(Yandex):
         threading.Thread(target=self._lessons_parse_print_, args=[f, t]).start()
 
         url = 'https://lms.yandexlyceum.ru/course/36/seminar/%s'
-        for i in range(f, t+1):
+        for i in range(f, t + 1):
             while self.threadingLessons > 400:
                 pass
 
@@ -391,7 +432,7 @@ class YandexLyceum(Yandex):
         print('Start parse tasks ...')
 
         url = 'https://lms.yandexlyceum.ru/issue/%s'
-        for i in range(f, t+1):
+        for i in range(f, t + 1):
             while self.threadingTasks > 400:
                 pass
 
@@ -409,7 +450,6 @@ class YandexLyceum(Yandex):
 
 
 class YandexContest(Yandex):
-
     def __init__(self):
 
         print('YandexContest %s' % Yandex.version)
@@ -535,20 +575,22 @@ class YandexContest(Yandex):
         url = 'https://passport.yandex.ru/profile/'
 
         try:
-            r = self.s.get(url)
-            html = lxml.html.fromstring(r.text)
+
+            content = self.s.get(url).content
 
             body = bs4.BeautifulSoup(
-                self.s.get('https://passport.yandex.ru/profile/').content,
+                content,
                 "lxml").find('div', {'class': 'personal-info-name'})
 
             name = body.text
 
-            body = html.xpath(r'//div//div[@data-reactid="55"]')
-            login = body[0].text.strip()
+            body = bs4.BeautifulSoup(
+                content,
+                "lxml").find('div', {'class': 'personal-info-login personal-info-login__displaylogin'})
+            login = body.text.strip()
 
             body = bs4.BeautifulSoup(
-                self.s.get('https://passport.yandex.ru/profile/').content,
+                content,
                 "lxml").find('div', {'class': 'last-auth'})
             date = body.text.replace('История входов', '')
 
@@ -564,7 +606,7 @@ class YandexContest(Yandex):
             print('Error get info about profile.')
             return
 
-        print("%s: %s, %s" % (name, login, date))
+        print("\n%s: %s\n%s\n" % (name, login, date))
 
     def _parse_print(self, f, t, word):
         word = word.lower()
@@ -616,7 +658,7 @@ class YandexContest(Yandex):
             return
 
         try:
-            f, t = abs(int(f)), abs(int(t))+1
+            f, t = abs(int(f)), abs(int(t)) + 1
 
         except TypeError:
             print('-Bad Input-')
