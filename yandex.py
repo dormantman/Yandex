@@ -272,182 +272,182 @@ class YandexLyceum(Yandex):
             print('Error get profile info.')
 
 
-def _lessons_parse_print_(self, f, t):
-    self.LessonPrint = True
+    def _lessons_parse_print_(self, f, t):
+        self.LessonPrint = True
 
-    for i in range(f, t):
-        while i not in self.operatingLessons:
-            pass
-
-        if self.operatingLessons[i] is None:
-            continue
-
-        print()
-        print('URL: https://lms.yandexlyceum.ru/course/36/seminar/%s' % i)
-        print(self.operatingLessons[i])
-        print()
-
-    self.LessonPrint = False
-
-
-def _tasks_parse_print_(self, f, t):
-    self.TasksPrint = True
-
-    for i in range(f, t):
-        while i not in self.operatingTasks:
-            pass
-
-        if self.operatingTasks[i] is None:
-            continue
-
-        print()
-        print('URL: https://lms.yandexlyceum.ru/issue/%s' % i)
-        print(self.operatingTasks[i]['name'])
-        print('Статус: %s' % self.operatingTasks[i]['status'])
-        print('Оценка: %s' % self.operatingTasks[i]['value'])
-        print()
-
-    self.TasksPrint = False
-
-
-def _lessons_parse_threading_(self, url, i):
-    self.threadingLessons += 1
-
-    while True:
-        try:
-            r = self.s.get(url % i)
-            break
-        except ConnectionError:
-            pass
-
-    try:
-        html = lxml.html.fromstring(r.text)
-        body = html.xpath(r'//div//h5[@class="card-title main-title"]')
-
-        if len(body) == 0:
-            raise IndexError
-
-        self.operatingLessons[i] = body[0].text.strip()
-
-    except IndexError:
-        self.operatingLessons[i] = None
-        pass
-
-    self.threadingLessons -= 1
-
-
-def _tasks_parse_threading_(self, url, i):
-    self.threadingTasks += 1
-
-    while True:
-        try:
-            r = self.s.get(url % i)
-            break
-        except ConnectionError:
-            pass
-
-    try:
-        html = lxml.html.fromstring(r.text)
-        body = html.xpath(r'//div//a[@id="modal_task_description_btn"]')
-
-        if len(body) == 0:
-            raise IndexError
-
-        name = body[0].text.strip()
-
-        body = html.xpath(r'//div//div[@class="col-md-7 accordion2-result"]')
-        status = body[5].text.strip()
-        value = body[6].text.strip()
-
-        self.operatingTasks[i] = {'name': name, 'status': status, 'value': value}
-
-        self.balls += int(body[6].text.strip())
-
-    except IndexError:
-        self.operatingTasks[i] = None
-        pass
-
-    self.threadingTasks -= 1
-
-
-def parse_lessons(self, f, t):
-    if not self.login:
-        print('You are not authorized.')
-        return
-
-    try:
-        f, t = abs(int(f)), abs(int(t))
-
-    except TypeError:
-        print('-Bad Input-')
-        return
-
-    except ValueError:
-        print('-Bad Input-')
-        return
-
-    print('Start parse lessons ...')
-
-    threading.Thread(target=self._lessons_parse_print_, args=[f, t]).start()
-
-    url = 'https://lms.yandexlyceum.ru/course/36/seminar/%s'
-    for i in range(f, t + 1):
-        while self.threadingLessons > 400:
-            pass
-
-        while True:
-            try:
-                threading.Thread(
-                    target=self._lessons_parse_threading_,
-                    args=[url, i]
-                ).start()
-                break
-
-            except ConnectionError:
+        for i in range(f, t):
+            while i not in self.operatingLessons:
                 pass
 
-    while self.LessonPrint:
-        pass
+            if self.operatingLessons[i] is None:
+                continue
+
+            print()
+            print('URL: https://lms.yandexlyceum.ru/course/36/seminar/%s' % i)
+            print(self.operatingLessons[i])
+            print()
+
+        self.LessonPrint = False
 
 
-def parse_tasks(self, f, t):
-    if not self.login:
-        print('You are not authorized.')
-        return
+    def _tasks_parse_print_(self, f, t):
+        self.TasksPrint = True
 
-    try:
-        f, t = abs(int(f)), abs(int(t))
+        for i in range(f, t):
+            while i not in self.operatingTasks:
+                pass
 
-    except TypeError:
-        print('-Bad Input-')
-        return
+            if self.operatingTasks[i] is None:
+                continue
 
-    except ValueError:
-        print('-Bad Input-')
-        return
+            print()
+            print('URL: https://lms.yandexlyceum.ru/issue/%s' % i)
+            print(self.operatingTasks[i]['name'])
+            print('Статус: %s' % self.operatingTasks[i]['status'])
+            print('Оценка: %s' % self.operatingTasks[i]['value'])
+            print()
 
-    threading.Thread(target=self._tasks_parse_print_, args=[f, t]).start()
+        self.TasksPrint = False
 
-    self.balls = 0
 
-    print('Start parse tasks ...')
-
-    url = 'https://lms.yandexlyceum.ru/issue/%s'
-    for i in range(f, t + 1):
-        while self.threadingTasks > 400:
-            pass
+    def _lessons_parse_threading_(self, url, i):
+        self.threadingLessons += 1
 
         while True:
             try:
-                threading.Thread(target=self._tasks_parse_threading_, args=[url, i]).start()
+                r = self.s.get(url % i)
                 break
             except ConnectionError:
                 pass
 
-    while self.TasksPrint:
-        pass
+        try:
+            html = lxml.html.fromstring(r.text)
+            body = html.xpath(r'//div//h5[@class="card-title main-title"]')
 
-    print('Your balls: %s' % self.balls)
+            if len(body) == 0:
+                raise IndexError
+
+            self.operatingLessons[i] = body[0].text.strip()
+
+        except IndexError:
+            self.operatingLessons[i] = None
+            pass
+
+        self.threadingLessons -= 1
+
+
+    def _tasks_parse_threading_(self, url, i):
+        self.threadingTasks += 1
+
+        while True:
+            try:
+                r = self.s.get(url % i)
+                break
+            except ConnectionError:
+                pass
+
+        try:
+            html = lxml.html.fromstring(r.text)
+            body = html.xpath(r'//div//a[@id="modal_task_description_btn"]')
+
+            if len(body) == 0:
+                raise IndexError
+
+            name = body[0].text.strip()
+
+            body = html.xpath(r'//div//div[@class="col-md-7 accordion2-result"]')
+            status = body[5].text.strip()
+            value = body[6].text.strip()
+
+            self.operatingTasks[i] = {'name': name, 'status': status, 'value': value}
+
+            self.balls += int(body[6].text.strip())
+
+        except IndexError:
+            self.operatingTasks[i] = None
+            pass
+
+        self.threadingTasks -= 1
+
+
+    def parse_lessons(self, f, t):
+        if not self.login:
+            print('You are not authorized.')
+            return
+
+        try:
+            f, t = abs(int(f)), abs(int(t))
+
+        except TypeError:
+            print('-Bad Input-')
+            return
+
+        except ValueError:
+            print('-Bad Input-')
+            return
+
+        print('Start parse lessons ...')
+
+        threading.Thread(target=self._lessons_parse_print_, args=[f, t]).start()
+
+        url = 'https://lms.yandexlyceum.ru/course/36/seminar/%s'
+        for i in range(f, t + 1):
+            while self.threadingLessons > 400:
+                pass
+
+            while True:
+                try:
+                    threading.Thread(
+                        target=self._lessons_parse_threading_,
+                        args=[url, i]
+                    ).start()
+                    break
+
+                except ConnectionError:
+                    pass
+
+        while self.LessonPrint:
+            pass
+
+
+    def parse_tasks(self, f, t):
+        if not self.login:
+            print('You are not authorized.')
+            return
+
+        try:
+            f, t = abs(int(f)), abs(int(t))
+
+        except TypeError:
+            print('-Bad Input-')
+            return
+
+        except ValueError:
+            print('-Bad Input-')
+            return
+
+        threading.Thread(target=self._tasks_parse_print_, args=[f, t]).start()
+
+        self.balls = 0
+
+        print('Start parse tasks ...')
+
+        url = 'https://lms.yandexlyceum.ru/issue/%s'
+        for i in range(f, t + 1):
+            while self.threadingTasks > 400:
+                pass
+
+            while True:
+                try:
+                    threading.Thread(target=self._tasks_parse_threading_, args=[url, i]).start()
+                    break
+                except ConnectionError:
+                    pass
+
+        while self.TasksPrint:
+            pass
+
+        print('Your balls: %s' % self.balls)
 
 
 class YandexContest(Yandex):
