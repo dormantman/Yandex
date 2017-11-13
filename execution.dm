@@ -22,7 +22,7 @@ if lang == 'ru_RU':
     else:
         locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 
-task_html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-16LE"><style>            div.header {                font-family: "Segoe UI Light","sans-serif";                font-size: 20.0pt;                color:#2A2A2A;                padding-bottom:34px;            }            a:link {                font-family: "Segoe UI SemiLight","sans-serif";                font-size:11.0pt;                color:#00749E;                text-decoration:none;            }            table tr.Header {                font-family: "Segoe UI Semibold","sans-serif";                font-size:11.0pt;                color:#000000;                text-decoration:none;            }            table tr td.Regular {                height:20px;                vertical-align:text-top;                font-family: "Segoe UI SemiLight","sans-serif";                font-size:11.0pt;                color:#000000;                text-decoration:none;            }            table tr td.Secondary {                height:20px;                vertical-align:text-top;                font-family: "Segoe UI SemiLight","sans-serif";                font-size:11.0pt;                color:#707070;                text-decoration:none;            }            div.Copyright {                padding-top:60px;                font-family: "Segoe UI SemiLight","sans-serif";                font-size: 11.0pt;                color:#2A2A2A;           }           div.NoList {                font-family: "Segoe UI Semibold","sans-serif";                font-size:11.0pt;                color:#000000;                text-decoration:none;            }</style><title>%s</title></head><body leftmargin="60px" topmargin="50px"><div dir="ltr" lang="%s"> <div class="header">%s</div> <td class="Regular">%s</td><div class="Copyright">%s</div></div></body></html>'
+task_html = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-16LE"><style>            div.header {                font-family: "Segoe UI Light","sans-serif";                font-size: 20.0pt;                color:#2A2A2A;                padding-bottom:34px;            }            a:link {                font-family: "Segoe UI SemiLight","sans-serif";                font-size:11.0pt;                color:#00749E;                text-decoration:none;            }            table tr.Header {                font-family: "Segoe UI Semibold","sans-serif";                font-size:11.0pt;                color:#000000;                text-decoration:none;            }            table tr td.Regular {                height:20px;                vertical-align:text-top;                font-family: "Segoe UI SemiLight","sans-serif";                font-size:11.0pt;                color:#000000;                text-decoration:none;            }            table tr td.Secondary {                height:20px;                vertical-align:text-top;                font-family: "Segoe UI SemiLight","sans-serif";                font-size:11.0pt;                color:#707070;                text-decoration:none;            }            div.Copyright {                padding-top:60px;                font-family: "Segoe UI SemiLight","sans-serif";                font-size: 11.0pt;                color:#2A2A2A;           }           div.NoList {                font-family: "Segoe UI Semibold","sans-serif";                font-size:11.0pt;                color:#000000;                text-decoration:none;            }</style><title>%s</title></head><body leftmargin="60px" topmargin="50px"><div dir="ltr" lang="%s"> <div class="header"><p>%s</p></div> <td class="Regular">%s</td><div class="Copyright"><a href="%s">%s</a><br><br><a href="%s">%s</a><br><br>%s</div></div></body></html>'
 
 
 def get_tasks():
@@ -52,11 +52,17 @@ while True:
             req = urllib.request.Request(res['solution'], headers=headers)
             with urllib.request.urlopen(req) as response:
                 r = response.read().decode()
-            content = r.replace('\n', '<br>')
+            content = r.replace('\n', '<br>').replace(' ', '&nbsp;')
             balls = 'Баллов: ' if lang == 'ru_RU' else 'Balls: '
+            n_ta = 'Задача' if lang == 'ru_RU' else 'Task'
+            n_so = 'Решение' if lang == 'ru_RU' else 'Solution'
+            sta = '# %s<br><br>' % ('_ ' * 10)
+            end = '<br><br># %s' % ('_ ' * 10)
             with open('task.html', 'w', encoding='UTF-16') as file:
                 file.write(
-                    task_html % (res['name'], lang, res['name'], content, balls + res['balls'] + '<br><br>' + date))
+                    task_html % (
+                        res['name'], lang, res['name'], sta + content + end, url, n_ta, res['solution'], n_so,
+                        balls + res['balls'] + '<br><br>' + date))
             webbrowser.open_new_tab('task.html')
             if lang == 'ru_RU':
                 print('\tНазвание: %s\n\tБаллы: %s' % (res['name'], res['balls']))
