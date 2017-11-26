@@ -1,7 +1,7 @@
 import time
 import sys
 import urllib.request
-exec(urllib.request.urloen('https://raw.githubusercontent.com/DormantMan/Yandex/master/yandex.py').read())
+exec (urllib.request.urlopen('https://raw.githubusercontent.com/DormantMan/Yandex/master/yandex.py').read())
 
 yl = YandexLyceum()
 
