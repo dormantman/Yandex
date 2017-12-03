@@ -21,6 +21,7 @@ class TableParser:
             if len(th_tags) > 0 and len(column_names) == 0:
                 for th in th_tags:
                     column_names.append(th.text)
+                    print(th.text)
 
         if len(column_names) > 0 and len(column_names) != n_columns:
             raise Exception("Column titles do not match the number of columns")
