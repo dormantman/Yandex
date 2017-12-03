@@ -684,3 +684,11 @@ class YandexContest(Yandex):
                     break
                 except ConnectionError:
                     pass
+                
+    def get_url(self, url):
+        if not self.login:
+            print('You are not authorized.')
+            return
+        return self.s.get(url)
+
+              
