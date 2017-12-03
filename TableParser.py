@@ -20,7 +20,7 @@ class TableParser:
             th_tags = row.find_all('th')
             if len(th_tags) > 0 and len(column_names) == 0:
                 for th in th_tags:
-                    column_names.append(th.get_text())
+                    column_names.append(th.text)
 
         if len(column_names) > 0 and len(column_names) != n_columns:
             raise Exception("Column titles do not match the number of columns")
@@ -33,7 +33,7 @@ class TableParser:
             column_marker = 0
             columns = row.find_all('td')
             for column in columns:
-                df.iat[row_marker, column_marker] = column.get_text()
+                df.iat[row_marker, column_marker] = column.text
                 column_marker += 1
             if len(columns) > 0:
                 row_marker += 1
