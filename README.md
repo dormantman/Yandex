@@ -53,7 +53,6 @@ import urllib.request
 exec(urllib.request.urlopen('https://bit.ly/YandexDmParser').read())
 ```
 
-or you can download an executable (binary) file
-https://bit.ly/YandexDmexeParser
+or you can download an executable (binary) file: [YandexDmParser.exe](https://bit.ly/YandexDmexeParser)
 
 **Good luck!**
