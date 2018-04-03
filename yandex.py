@@ -568,6 +568,7 @@ class YandexContest(Yandex):
         return False
 
     def profile(self):
+        return # FIXME
         if not self.login:
             print('You are not authorized.')
             return
