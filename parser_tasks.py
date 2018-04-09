@@ -24,7 +24,11 @@ class TasksParser(YandexLyceum):
         body_a = engine.find_all('a')
         tasks = list(filter(lambda y: y and 'anytask.s3.yandex.net/files/' in y, map(lambda x: x.get('href'), body_a)))
         self.tasks[name]['solves'] = tasks
-        print(name, 'OK')
+
+        nm = name
+        while len(nm) < 50:
+            nm += ' '
+        print(nm, self.tasks[name]['status'], '\t\t', self.tasks[name]['score'])
 
     def load_tasks(self):
         if not self.login:
@@ -62,7 +66,7 @@ class TasksParser(YandexLyceum):
 
     def to_file(self, filename='dm.json'):
         """ Update file (non-viable) """
-        
+
         # if os.access(filename, os.F_OK):
         #     with open(filename, 'r') as file:
         #         f = json.loads(file.read())
