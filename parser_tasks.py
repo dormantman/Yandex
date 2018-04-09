@@ -57,6 +57,9 @@ class TasksParser(YandexLyceum):
                     pass
                 threading.Thread(target=self._solve_task_, args=[txt[i], self.tasks[txt[i]]['url']]).start()
 
+        while threading.active_count() > 1:
+            pass
+
     def to_file(self, filename='dm.json'):
         if os.access(filename, os.F_OK):
             with open(filename, 'r') as file:
