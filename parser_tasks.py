@@ -58,6 +58,10 @@ class TasksParser(YandexLyceum):
                 threading.Thread(target=self._solve_task_, args=[txt[i], self.tasks[txt[i]]['url']]).start()
 
     def to_file(self, filename='dm.json'):
+        if os.access(filename, os.F_OK):
+            with open(filename, 'r') as file:
+                f = json.loads(file.read())
+            self.tasks.update(f)
         with open(filename, 'w') as file:
             file.write(json.dumps(self.tasks))
 
