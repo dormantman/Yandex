@@ -16,6 +16,7 @@ class TasksParser(YandexLyceum):
     def __init__(self):
         super().__init__()
         self.tasks = {}
+        self.info_tasks = [0, 0]  # ok, fail
 
     def _solve_task_(self, name, url):
         r = self.s.get(url)
@@ -28,7 +29,17 @@ class TasksParser(YandexLyceum):
         nm = name
         while len(nm) < 50:
             nm += ' '
-        print(nm, self.tasks[name]['status'], '\t\t', self.tasks[name]['score'])
+
+        st = self.tasks[name]['status']
+        while len(st) < 15:
+            st += ' '
+
+        ss = self.tasks[name]['status'] == 'Зачтено'
+        sim = 'OK' if ss else 'Fail'
+        self.info_tasks[0] += 1 if ss else 0
+        self.info_tasks[1] += 1 if not ss else 0
+
+        print(nm, st, self.tasks[name]['score'], '\t', sim)
 
     def load_tasks(self):
         if not self.login:
@@ -63,6 +74,8 @@ class TasksParser(YandexLyceum):
 
         while threading.active_count() > 1:
             pass
+
+        print(f'Tasks Solve: {self.info_tasks[0]}\nTasks Fail: {self.info_tasks[1]}')
 
     def to_file(self, filename='dm.json'):
         """ Update file (non-viable) """
