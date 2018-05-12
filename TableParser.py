@@ -1,11 +1,13 @@
-import pandas as pd
-
 class TableParser:
     def parse_url(self, request, url):
         response = request.get(url)
         soup = bs4.BeautifulSoup(response.text, 'lxml')
         return [self.parse_html_table(table) for table in soup.find_all('table')]
-    
+
+    def parse_text(self, text):
+        soup = bs4.BeautifulSoup(text, 'lxml')
+        return [self.parse_html_table(table) for table in soup.find_all('table')]
+
     @staticmethod
     def parse_html_table(table):
         n_columns = 0
